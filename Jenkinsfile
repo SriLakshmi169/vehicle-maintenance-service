@@ -31,6 +31,12 @@ pipeline {
                 bat 'mvnw.cmd package -DskipTests'
             }
         }
+        stage('Docker Build') {
+    steps {
+        echo 'Building Docker image...'
+        bat 'docker build -t vehicle-maintenance-service:1.0 .'
+    }
+}
     }
 
     post {
