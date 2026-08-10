@@ -31,6 +31,12 @@ pipeline {
                 bat 'mvnw.cmd package -DskipTests'
             }
         }
+        stage('Check Docker') {
+    steps {
+        bat 'where docker'
+        bat 'docker --version'
+    }
+}
         stage('Docker Build') {
     steps {
         echo 'Building Docker image...'
