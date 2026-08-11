@@ -69,7 +69,7 @@ stage('Deploy') {
         bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
 
         echo 'Waiting for application to start...'
-        bat 'timeout /t 10 /nobreak'
+        bat 'ping 127.0.0.1 -n 11 > nul'
 
         echo 'Running deployment health check...'
         bat 'curl.exe -f http://localhost:8083/api/vehicles'
