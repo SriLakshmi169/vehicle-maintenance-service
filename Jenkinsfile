@@ -79,17 +79,53 @@ stage('Deploy Canary') {
 }
 stage('Promote Canary') {
     steps {
-        echo 'Canary health check passed. Promoting version 1.1 to production...'
+        script {
 
-        bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
+            echo 'Preparing previous production version...'
 
-        bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.1'
+            // Make sure the previous production image exists locally
+            bat 'docker pull srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
 
-        echo 'Waiting for production application to start...'
-        bat 'ping 127.0.0.1 -n 11 > nul'
+            echo 'Stopping previous production container...'
 
-        echo 'Checking promoted production version...'
-        bat 'curl.exe -f http://localhost:8083/api/vehicles/version'
+            bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
+
+            echo 'Starting new production version 1.1...'
+
+            bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.1'
+
+            echo 'Waiting for production application...'
+
+            bat 'ping 127.0.0.1 -n 11 > nul'
+
+            echo 'Checking production health...'
+
+            int healthStatus = bat(
+                script: 'curl.exe -f http://localhost:8083/api/vehicles/version',
+                returnStatus: true
+            )
+
+            if (healthStatus != 0) {
+
+                echo 'Production 1.1 FAILED! Starting rollback to 1.0...'
+
+                bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
+
+                bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
+
+                echo 'Waiting for rollback application...'
+
+                bat 'ping 127.0.0.1 -n 11 > nul'
+
+                echo 'Checking rollback health...'
+
+                bat 'curl.exe -f http://localhost:8083/api/vehicles'
+
+                error('Production deployment failed. Rollback to version 1.0 completed.')
+            }
+
+            echo 'Production 1.1 health check passed!'
+        }
     }
 }
     }
