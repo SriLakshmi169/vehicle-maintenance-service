@@ -77,6 +77,21 @@ stage('Deploy Canary') {
         bat 'curl.exe -f http://localhost:8084/api/vehicles/version'
     }
 }
+stage('Promote Canary') {
+    steps {
+        echo 'Canary health check passed. Promoting version 1.1 to production...'
+
+        bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
+
+        bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.1'
+
+        echo 'Waiting for production application to start...'
+        bat 'ping 127.0.0.1 -n 11 > nul'
+
+        echo 'Checking promoted production version...'
+        bat 'curl.exe -f http://localhost:8083/api/vehicles/version'
+    }
+}
     }
 
     post {
