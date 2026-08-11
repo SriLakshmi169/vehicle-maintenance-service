@@ -37,10 +37,10 @@ pipeline {
         bat 'docker --version'
     }
 }
-        stage('Docker Build') {
+     stage('Docker Build') {
     steps {
-        echo 'Building Docker image...'
-        bat 'docker build -t vehicle-maintenance-service:1.0 .'
+        echo 'Building Docker 1.1 image...'
+        bat 'docker build -t vehicle-maintenance-service:1.1 .'
     }
 }
 stage('Docker Push') {
@@ -53,8 +53,10 @@ stage('Docker Push') {
             )
         ]) {
             bat 'docker login -u "%DOCKER_USERNAME%" -p "%DOCKER_PASSWORD%"'
-            bat 'docker tag vehicle-maintenance-service:1.0 %DOCKER_USERNAME%/vehicle-maintenance-service:1.0'
-            bat 'docker push %DOCKER_USERNAME%/vehicle-maintenance-service:1.0'
+
+            bat 'docker tag vehicle-maintenance-service:1.1 %DOCKER_USERNAME%/vehicle-maintenance-service:1.1'
+
+            bat 'docker push %DOCKER_USERNAME%/vehicle-maintenance-service:1.1'
         }
     }
 }
