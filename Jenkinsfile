@@ -58,6 +58,17 @@ stage('Docker Push') {
         }
     }
 }
+stage('Deploy') {
+    steps {
+        echo 'Deploying Docker container...'
+
+        bat 'docker pull srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
+
+        bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
+
+        bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
+    }
+}
     }
 
     post {
