@@ -43,6 +43,21 @@ pipeline {
         bat 'docker build -t vehicle-maintenance-service:1.0 .'
     }
 }
+stage('Docker Push') {
+    steps {
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'dockerhub-credentials',
+                usernameVariable: 'DOCKER_USERNAME',
+                passwordVariable: 'DOCKER_PASSWORD'
+            )
+        ]) {
+            bat 'docker login -u "%DOCKER_USERNAME%" -p "%DOCKER_PASSWORD%"'
+            bat 'docker tag vehicle-maintenance-service:1.0 %DOCKER_USERNAME%/vehicle-maintenance-service:1.0'
+            bat 'docker push %DOCKER_USERNAME%/vehicle-maintenance-service:1.0'
+        }
+    }
+}
     }
 
     post {
