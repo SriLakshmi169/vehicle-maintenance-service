@@ -71,7 +71,7 @@ stage('Deploy Canary') {
         bat 'docker run -d --name vehicle-maintenance-canary -p 8084:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.1'
 
         echo 'Waiting for canary application to start...'
-        bat 'ping 127.0.0.1 -n 11 > nul'
+        bat 'ping 127.0.0.1 -n 21 > nul'
 
         echo 'Running canary health check...'
         bat 'curl.exe -f http://localhost:8084/api/vehicles/version'
