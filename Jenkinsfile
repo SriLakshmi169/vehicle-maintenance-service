@@ -101,9 +101,10 @@ stage('Promote Canary') {
             echo 'Checking production health...'
 
             int healthStatus = bat(
-                script: 'curl.exe -f http://localhost:8083/api/vehicles/version',
-                returnStatus: true
-            )
+    script: 'curl.exe -f http://localhost:8083/api/vehicles/THIS_ENDPOINT_DOES_NOT_EXIST',
+    returnStatus: true
+)
+            
 
             if (healthStatus != 0) {
 
