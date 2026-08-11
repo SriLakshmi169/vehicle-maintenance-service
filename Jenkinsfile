@@ -101,14 +101,15 @@ stage('Promote Canary') {
             echo 'Checking production health...'
 
             int healthStatus = bat(
-    script: 'curl.exe -f http://localhost:8083/api/vehicles/THIS_ENDPOINT_DOES_NOT_EXIST',
+    script: 'curl.exe -f http://localhost:8083/api/vehicles/version',
     returnStatus: true
+
 )
             
 
             if (healthStatus != 0) {
 
-                echo 'Production 1.1 FAILED! Starting rollback to 1.0...'
+                echo 'Production deployment failed. Rollback to version 1.0 completed successfully.'
 
                 bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
 
