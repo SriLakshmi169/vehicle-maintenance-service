@@ -1,6 +1,8 @@
 package vehicle_maintenance_service.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +49,7 @@ public class VehicleController {
         );
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<Vehicle> getVehicleById(
             @PathVariable Long id) {
 
@@ -56,7 +58,7 @@ public class VehicleController {
         );
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     public ResponseEntity<Vehicle> updateVehicle(
             @PathVariable Long id,
             @RequestBody Vehicle vehicle) {
@@ -66,12 +68,24 @@ public class VehicleController {
         );
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     public ResponseEntity<Void> deleteVehicle(
             @PathVariable Long id) {
 
         vehicleService.deleteVehicle(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // Canary deployment version endpoint
+    @GetMapping("/version")
+    public ResponseEntity<Map<String, String>> getVersion() {
+
+        Map<String, String> response = new HashMap<>();
+
+        response.put("version", "1.1");
+        response.put("environment", "canary");
+
+        return ResponseEntity.ok(response);
     }
 }
