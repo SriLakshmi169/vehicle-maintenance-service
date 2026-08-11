@@ -67,6 +67,12 @@ stage('Deploy') {
         bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
 
         bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
+
+        echo 'Waiting for application to start...'
+        bat 'timeout /t 10 /nobreak'
+
+        echo 'Running deployment health check...'
+        bat 'curl.exe -f http://localhost:8083/api/vehicles'
     }
 }
     }
