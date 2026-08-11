@@ -60,21 +60,21 @@ stage('Docker Push') {
         }
     }
 }
-stage('Deploy') {
+stage('Deploy Canary') {
     steps {
-        echo 'Deploying Docker container...'
+        echo 'Deploying canary version 1.1...'
 
-        bat 'docker pull srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
+        bat 'docker pull srilakshmipasupuleti17/vehicle-maintenance-service:1.1'
 
-        bat 'docker rm -f vehicle-maintenance-prod 2>nul || exit /b 0'
+        bat 'docker rm -f vehicle-maintenance-canary 2>nul || exit /b 0'
 
-        bat 'docker run -d --name vehicle-maintenance-prod -p 8083:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.0'
+        bat 'docker run -d --name vehicle-maintenance-canary -p 8084:8081 srilakshmipasupuleti17/vehicle-maintenance-service:1.1'
 
-        echo 'Waiting for application to start...'
+        echo 'Waiting for canary application to start...'
         bat 'ping 127.0.0.1 -n 11 > nul'
 
-        echo 'Running deployment health check...'
-        bat 'curl.exe -f http://localhost:8083/api/vehicles'
+        echo 'Running canary health check...'
+        bat 'curl.exe -f http://localhost:8084/api/vehicles/version'
     }
 }
     }
